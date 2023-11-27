@@ -65,6 +65,7 @@ class ChatClient(cmd.Cmd):
         Disconnect from the server and quit the program
         """
         self.send_message('QUIT')
+        print("You have Quit.")
         self.connection.close()
         os._exit(0)
 
