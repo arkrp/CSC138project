@@ -1,5 +1,11 @@
-# Nicolas Gugliemo, Course CSC 138, Section 01
-
+#Nicolas Gugliemo
+#Garret Learned
+#Hannah Nelson
+#Fabrice Auriole Yonkeu Ebenye
+#Estefany Aguilar Luna
+#CSC/CPE 138 Section 01
+#11/26/2023
+#server program for the TCP chatroom
 
 import socket
 import sys
