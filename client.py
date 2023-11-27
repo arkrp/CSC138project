@@ -6,7 +6,6 @@ import threading
 
 def main():
     verifyarguments()
-    print(sys.argv)
     server_ip = sys.argv[1]
     server_port = int(sys.argv[2])
     connection = makeconnection(server_ip, server_port)
@@ -43,6 +42,7 @@ class ChatClient(cmd.Cmd):
 
     def __init__(self, connection):
         super().__init__()
+        self.prompt = ""
         self.connection = connection
 
     def send_message(self, message):
@@ -54,8 +54,9 @@ class ChatClient(cmd.Cmd):
     def do_LIST(self, arg):
         self.send_message('LIST')
 
-    def do_MESG(self, arg):
-        self.send_message(f'MESG {arg}')
+    def do_MESG(self, *arg):
+        print(f'{arg[0]}')
+        self.send_message(f'MESG {arg[0]}')
 
     def do_BCST(self, arg):
         self.send_message(f'BCST {arg}')

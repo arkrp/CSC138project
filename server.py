@@ -97,11 +97,14 @@ def MESG(sender, *args):
         if len(args) < 2:
             raise ValueError("MESG command requires at least two arguments: recipientName and message")
 
-        recipientName, message = args
+        recipientName, *message = args
+        decodedmessage = ""
+        for i in message:
+            decodedmessage+=(i+" ")
 
         if recipientName in users:
             rec_socket = users[recipientName]
-            rec_socket.send(f'Message from {sender}: {message}'.encode('utf-8'))
+            rec_socket.send(f'Message from {sender}: {decodedmessage}'.encode('utf-8'))
         else:
             users[sender].send(f'This recipient name is not in the chat room'.encode('utf-8'))
 
