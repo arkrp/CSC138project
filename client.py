@@ -1,6 +1,8 @@
 import cmd
 import sys
+import os
 import socket
+import threading
 
 def main():
     verifyarguments()
@@ -8,12 +10,22 @@ def main():
     server_ip = sys.argv[1]
     server_port = int(sys.argv[2])
     connection = makeconnection(server_ip, server_port)
+    connection.settimeout(None)
+    #start a threat which prints out everything we recieve!
+    mythread = threading.Thread(target= printloop, args= (connection,))
+    mythread.start()
     ChatClient(connection).cmdloop()
+
+def printloop(connection):
+    while(True):
+        response = connection.recv(1024).decode('utf-8')
+        print(response)
+
 
 def verifyarguments():
     if len(sys.argv) == 1:
         print('incorrect number of arguments supplied\nusage: python3 client.py <server_port>')
-        exit(1)
+        os._exit(1)
 
 def makeconnection(serverName, serverPort):
     TCPSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -23,7 +35,7 @@ def makeconnection(serverName, serverPort):
         return TCPSocket
     except (socket.timeout, ConnectionRefusedError):
         print('No response to connection. Did you choose the right port?')
-        quit(1)
+        os._exit(1)
 
 class ChatClient(cmd.Cmd):
     # TODO add some sort of passive listener for incoming messages? that sounds kind of hard to be honest
@@ -54,7 +66,7 @@ class ChatClient(cmd.Cmd):
         """
         self.send_message('QUIT')
         self.connection.close()
-        quit(0)
+        os._exit(0)
 
 if __name__ == '__main__':
     main()
