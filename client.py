@@ -5,7 +5,7 @@
 #Estefany Aguilar Luna
 #CSC/CPE 138 Section 01
 #11/26/2023
-#sclient program for the TCP chatroom
+#client program for the TCP chatroom
 
 import cmd
 import sys
