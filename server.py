@@ -36,10 +36,7 @@ def handle_user(user_socket, address):
         elif command == "BCST":
             BCST(sender=args[0], message=args[1])
         elif command == "QUIT":
-            if args:  # Check if args is not empty
-                QUIT(name=args[0], user_socket=user_socket)
-            else:
-                user_socket.send("Invalid QUIT command".encode("utf-8"))
+            QUIT(name=args[0], user_socket=user_socket)
         else:
             user_socket.send("Unknown Message".encode("utf-8"))
 
@@ -55,20 +52,19 @@ def JOIN(name, user_socket, address):
         else:
             users[str(name)] = user_socket
             print(f'The name of this client is {name}'.encode('utf-8'))
-            BCST(user_socket, '{name} has Joined the Chatroom'.encode('utf-8'))
+            BCST(user_socket, f'{str(name)} has Joined the Chatroom'.encode('utf-8'))
             user_socket.send('You are connected'.encode('utf-8'))
 
 
 def BCST(sender, message):
     for name, user_socket in users.items():
         if name != sender:
-            user_socket.send(f'{sender} is sending a broadcast\n {message}'.encode('utf-8'))
+            user_socket.send(f'{str(name)} is sending a broadcast\n {message}'.encode('utf-8'))
 
 
 def QUIT(name, user_socket):
-    if name in users:
         print("f{name} has left the chat.")
-        user_socket.send(f"You have left!".encode('utf-8'))
+        #user_socket.send(f"You have left!".encode('utf-8'))
         BCST(user_socket, '{name} is quitting the chat server')
         del users[name]
         user_socket.close()
