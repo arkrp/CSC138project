@@ -21,6 +21,7 @@ def create_server(port):  # Create server and bind port to IP; start listening
         user_thread = threading.Thread(target=handle_user, args=(user_socket, user_address))
         user_thread.start()
 
+
 def handle_user(user_socket, address):
     while True:
         incoming = user_socket.recv(1024).decode('utf-8').strip()
@@ -29,22 +30,18 @@ def handle_user(user_socket, address):
         if command == "JOIN":
             JOIN(name=args[0], user_socket=user_socket, address=address)
         elif command == "LIST":
-            list(user_socket)
+            LIST(user_socket)
         elif command == "MESG":
             MESG(sender=args[0], recipientName=args[1], message=args[2])
         elif command == "BCST":
             BCST(sender=args[0], message=args[1])
         elif command == "QUIT":
-            QUIT(name=args[0], user_socket=user_socket)
+            if args:  # Check if args is not empty
+                QUIT(name=args[0], user_socket=user_socket)
+            else:
+                user_socket.send("Invalid QUIT command".encode("utf-8"))
         else:
             user_socket.send("Unknown Message".encode("utf-8"))
-
-    # index = users.index(user)
-    # users.remove(user)
-    # user.close()
-    # name = names[index]
-    # BCST(f'{name} has left the chat room!'.encode('utf-8'))
-    # names.remove(name)
 
 
 def JOIN(name, user_socket, address):
@@ -56,7 +53,7 @@ def JOIN(name, user_socket, address):
         if name in users:
             user_socket.send("Name already taken, or already joined".encode("utf-8"))
         else:
-            users[name] = user_socket
+            users[str(name)] = user_socket
             print(f'The name of this client is {name}'.encode('utf-8'))
             BCST(user_socket, '{name} has Joined the Chatroom'.encode('utf-8'))
             user_socket.send('You are connected'.encode('utf-8'))
@@ -77,9 +74,11 @@ def QUIT(name, user_socket):
         user_socket.close()
 
 
-def list(user_socket):
-    for names in users:
-        user_socket.send('\n'.join(names).encode('utf-8'))
+def LIST(user_socket):
+    user_list = "\n".join(str(name) for name in users.keys())
+    user_socket.send(user_list.encode('utf-8'))
+    print("List has been sent")
+    print(user_list)
 
 
 def MESG(sender, recipientName, message):
